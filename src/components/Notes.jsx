@@ -1,31 +1,23 @@
 /* eslint-disable react/prop-types */
 
-import React, { useEffect } from "react";
 import { FaEdit, FaTrash } from "react-icons/fa";
-import { useSelector, useDispatch } from "react-redux";
-import { deleteNote, fetchNotes } from "../store/api/NoteSlice";
+import { useFetchNotesQuery, useDeleteNoteMutation } from "../store/api/NoteSlice";
 import { Link } from "react-router-dom";
 
 function Notes() {
-  const allNotes = useSelector((state) => state.notes);
 
-  const { notes, status, error } = allNotes;
-
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(fetchNotes());
-  }, [dispatch]);
+  const {data: notes = [], isLoading, error} = useFetchNotesQuery();
+  const [deleteNote] = useDeleteNoteMutation();
 
   const deleteNoteHandler = (id) => {
-    dispatch(deleteNote(id));
+    deleteNote(id)
   };
   
 
   return (
     <div className="flex flex-wrap justify-center mt-5">
-      {status === "loading" && <div className="relative p-5 bg-yellow-400 w-64 h-64 m-5 shadow-2xl overflow-hidden">Loading...</div>}
-      {status === "failed" && <div className="relative p-5 bg-yellow-400 w-64 h-64 m-5 shadow-2xl overflow-hidden">Sorry, {error}</div>}
+      {isLoading === "loading" && <div className="relative p-5 bg-yellow-400 w-64 h-64 m-5 shadow-2xl overflow-hidden">Loading...</div>}
+      {isLoading === "failed" && <div className="relative p-5 bg-yellow-400 w-64 h-64 m-5 shadow-2xl overflow-hidden">Sorry, {error}</div>}
       {notes.map((note) =>  (
         <div
           className="relative bg-yellow-400 w-64 h-64 m-5 shadow-2xl overflow-hidden"
